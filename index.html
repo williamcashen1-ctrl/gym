@@ -1,1 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Will's Training Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --surface3: #222222;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f0;
+    --muted: #666;
+    --subtle: #444;
+    --teal: #00c896;
+    --teal-dim: rgba(0,200,150,0.12);
+    --teal-border: rgba(0,200,150,0.3);
+    --blue: #4a9eff;
+    --blue-dim: rgba(74,158,255,0.12);
+    --amber: #f0a500;
+    --amber-dim: rgba(240,165,0,0.12);
+    --purple: #9b7fff;
+    --purple-dim: rgba(155,127,255,0.12);
+    --red: #ff5c5c;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-pill: 999px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
 
+  /* LAYOUT */
+  .app { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+  /* HERO */
+  .hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+  }
+  .hero-name {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    color: var(--text);
+    cursor: text;
+    border-radius: 6px;
+    padding: 2px 6px;
+    margin: -2px -6px;
+    transition: background 0.15s;
+    outline: none;
+    min-width: 40px;
+  }
+  .hero-name:hover { background: var(--surface2); }
+  .hero-name:focus { background: var(--surface2); box-shadow: 0 0 0 2px var(--teal); }
+  .hero-sub { font-size: 12px; color: var(--muted); margin-top: 4px; letter-spacing: 0.02em; }
+  .hero-pills { display: flex; gap: 6px; flex-shrink: 0; padding-top: 4px; }
+  .pill {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    background: var(--surface);
+    cursor: text;
+    outline: none;
+    min-width: 10px;
+  }
+  .pill:focus { border-color: var(--teal); color: var(--text); }
+  .pill-green { border-color: var(--teal-border); color: var(--teal); background: var(--teal-dim); cursor: default; }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    gap: 3px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin-bottom: 1.75rem;
+  }
+  .nav-btn {
+    flex: 1;
+    padding: 9px 6px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    border: none;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s;
+  }
+  .nav-btn:hover { color: var(--text); background: var(--surface2); }
+  .nav-btn.active { background: var(--surface3); color: var(--text); border: 1px solid var(--border2); }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* EDIT TIP */
+  .edit-tip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: var(--subtle);
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.02em;
+  }
+  .edit-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+
+  /* STATS ROW */
+  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 1.25rem; }
+  .stats-row.cols2 { grid-template-columns: 1fr 1fr; }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+  }
+  .stat-lbl { font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .stat-val {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.4px;
+    cursor: text;
+    outline: none;
+    border-radius: 4px;
+    padding: 1px 3px;
+    margin: -1px -3px;
+    display: inline-block;
+    min-width: 10px;
+  }
+  .stat-val:hover { background: var(--surface2); }
+  .stat-val:focus { background: var(--surface2); box-shadow: 0 0 0 2px var(--teal); }
+  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; cursor: text; outline: none; display: inline-block; min-width: 10px; }
+  .stat-sub:focus { color: var(--text); }
+  .stat-bar { height: 3px; background: var(--surface3); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+  .stat-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .card-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; gap: 8px; }
+  .card-title { font-size: 14px; font-weight: 500; color: var(--text); cursor: text; outline: none; min-width: 10px; border-radius: 4px; padding: 1px 3px; margin: -1px -3px; }
+  .card-title:focus { background: var(--surface2); box-shadow: 0 0 0 2px var(--teal); }
+
+  /* BADGES */
+  .badge { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: var(--radius-pill); letter-spacing: 0.04em; white-space: nowrap; cursor: text; outline: none; min-width: 10px; }
+  .badge:focus { box-shadow: 0 0 0 2px var(--teal); }
+  .badge-teal { background: var(--teal-dim); color: var(--teal); border: 1px solid var(--teal-border); }
+  .badge-blue { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(74,158,255,0.25); }
+  .badge-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(240,165,0,0.25); }
+  .badge-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(155,127,255,0.25); }
+
+  /* EXERCISES */
+  .ex-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .ex-row:last-child { border-bottom: none; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-teal { background: var(--teal); }
+  .dot-blue { background: var(--blue); }
+  .dot-amber { background: var(--amber); }
+  .dot-purple { background: var(--purple); }
+  .ex-body { flex: 1; min-width: 0; }
+  .ex-name { font-size: 13px; font-weight: 500; color: var(--text); cursor: text; outline: none; border-radius: 4px; min-width: 10px; }
+  .ex-name:focus { background: var(--surface2); box-shadow: 0 0 0 2px var(--teal); padding: 0 3px; margin: 0 -3px; }
+  .ex-hint { font-size: 11px; color: var(--muted); margin-top: 2px; cursor: text; outline: none; min-width: 10px; }
+  .ex-hint:focus { color: var(--text); }
+  .ex-sets {
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 3px 9px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+    cursor: text;
+    outline: none;
+    min-width: 10px;
+  }
+  .ex-sets:focus { border-color: var(--teal); color: var(--text); }
+  .del-btn {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--subtle);
+    font-size: 16px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: all 0.15s;
+  }
+  .del-btn:hover { background: rgba(255,92,92,0.15); border-color: var(--red); color: var(--red); }
+  .ex-row:hover .del-btn { display: flex; }
+
+  /* ADD ROW */
+  .add-row { display: flex; gap: 7px; margin-top: 12px; align-items: center; flex-wrap: wrap; }
+  .add-row input {
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 6px 11px;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    color: var(--text);
+    height: 34px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .add-row input::placeholder { color: var(--subtle); }
+  .add-row input:focus { border-color: var(--teal); }
+  #ex-name-in { flex: 2; min-width: 110px; }
+  #ex-sets-in { width: 90px; }
+  .add-btn {
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    padding: 6px 14px;
+    border: 1px solid var(--teal-border);
+    border-radius: var(--radius-sm);
+    background: var(--teal-dim);
+    color: var(--teal);
+    cursor: pointer;
+    height: 34px;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .add-btn:hover { background: rgba(0,200,150,0.2); }
+
+  /* GOALS */
+  .goal-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .goal-row:last-child { border-bottom: none; }
+  .goal-info { flex: 1; min-width: 0; }
+  .goal-name { font-size: 13px; font-weight: 500; color: var(--text); cursor: text; outline: none; min-width: 10px; border-radius: 4px; }
+  .goal-name:focus { background: var(--surface2); padding: 0 3px; margin: 0 -3px; box-shadow: 0 0 0 2px var(--teal); }
+  .goal-detail { font-size: 11px; color: var(--muted); margin-top: 2px; cursor: text; outline: none; min-width: 10px; }
+  .goal-detail:focus { color: var(--text); }
+  .g-track { flex: 2; height: 4px; background: var(--surface3); border-radius: 2px; overflow: hidden; min-width: 60px; }
+  .g-fill { height: 100%; border-radius: 2px; transition: width 0.3s ease; }
+  .pct-wrap { display: flex; align-items: center; gap: 2px; }
+  .pct-input {
+    width: 44px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'DM Mono', monospace;
+    text-align: center;
+    padding: 3px 4px;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    color: var(--muted);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .pct-input:focus { border-color: var(--teal); color: var(--text); }
+  .pct-sign { font-size: 11px; color: var(--subtle); }
+
+  /* DAY GRID */
+  .day-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.25rem; }
+  .day-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 13px 15px;
+    transition: border-color 0.15s;
+  }
+  .day-card:hover { border-color: var(--border2); }
+  .day-card.rest-day { background: var(--bg); }
+  .day-card.full-width { grid-column: 1 / -1; }
+  .day-lbl { font-size: 10px; font-weight: 600; color: var(--subtle); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 5px; }
+  .day-focus { font-size: 14px; font-weight: 500; color: var(--text); cursor: text; outline: none; border-radius: 4px; min-width: 10px; }
+  .day-focus:focus { background: var(--surface2); padding: 0 3px; margin: 0 -3px; box-shadow: 0 0 0 2px var(--teal); }
+  .day-muscles { font-size: 11px; color: var(--muted); margin-top: 3px; cursor: text; outline: none; min-width: 10px; }
+  .day-muscles:focus { color: var(--text); }
+  .day-badge { display: inline-block; margin-top: 9px; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: var(--radius-pill); letter-spacing: 0.04em; }
+
+  /* RUN BLOCKS */
+  .run-block {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    transition: border-color 0.15s;
+  }
+  .run-block:hover { border-color: var(--border2); }
+  .run-wk { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 7px; cursor: text; outline: none; min-width: 10px; }
+  .run-wk:focus { color: var(--text); }
+  .run-s { font-size: 13px; color: var(--text); padding: 3px 0; display: flex; gap: 10px; align-items: baseline; }
+  .run-day { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--teal); min-width: 28px; flex-shrink: 0; }
+  .run-desc { cursor: text; outline: none; min-width: 10px; color: var(--text); }
+  .run-desc:focus { background: var(--surface2); border-radius: 4px; padding: 0 3px; margin: 0 -3px; box-shadow: 0 0 0 2px var(--teal); }
+
+  /* ACTION BUTTONS */
+  .actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 13px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .action-btn:hover { background: var(--surface2); border-color: var(--teal-border); color: var(--teal); }
+  .action-btn:active { transform: scale(0.97); }
+  .action-btn .arr { font-size: 11px; opacity: 0.6; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 1rem 0; }
+
+  /* RESPONSIVE */
+  @media (max-width: 500px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .stats-row .stat-card:last-child { grid-column: 1 / -1; }
+    .hero-name { font-size: 22px; }
+    .add-row { flex-direction: column; align-items: stretch; }
+    #ex-name-in, #ex-sets-in, .add-btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="hero">
+    <div>
+      <div class="hero-name" contenteditable="true" spellcheck="false">Will's Training Hub</div>
+      <div class="hero-sub">tap any text to edit &nbsp;·&nbsp; all changes save automatically</div>
+    </div>
+    <div class="hero-pills">
+      <div class="pill pill-green">Active</div>
+      <div class="pill" contenteditable="true" spellcheck="false">Week 3</div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="switchTab('dashboard',this)">Dashboard</button>
+    <button class="nav-btn" onclick="switchTab('plan',this)">Weekly plan</button>
+    <button class="nav-btn" onclick="switchTab('goals',this)">Goals</button>
+    <button class="nav-btn" onclick="switchTab('running',this)">Running</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="section active">
+    <div class="edit-tip"><div class="edit-dot"></div>Tap any value to edit it live</div>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-lbl">Bench max</div>
+        <div class="stat-val" contenteditable="true" spellcheck="false" id="s-bench" oninput="updateBenchBar();save()">95 kg</div>
+        <div class="stat-sub" contenteditable="true" spellcheck="false">Target: <span id="s-bench-target" contenteditable="true" oninput="updateBenchBar();save()">100 kg</span></div>
+        <div class="stat-bar"><div class="stat-fill" id="bench-bar" style="width:95%;background:var(--teal)"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">Sessions</div>
+        <div class="stat-val" contenteditable="true" spellcheck="false" oninput="save()">3 / 5</div>
+        <div class="stat-sub">This week</div>
+        <div class="stat-bar"><div class="stat-fill" style="width:60%;background:var(--blue)"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">Run target</div>
+        <div class="stat-val" contenteditable="true" spellcheck="false" oninput="save()">10:30</div>
+        <div class="stat-sub">1.5 mi infantry</div>
+        <div class="stat-bar"><div class="stat-fill" style="width:40%;background:var(--amber)"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title" contenteditable="true" spellcheck="false" oninput="save()">Today — push day</div>
+        <div class="badge badge-teal" contenteditable="true" spellcheck="false" oninput="save()">Strength focus</div>
+      </div>
+      <div id="today-exs">
+        <div class="ex-row"><div class="dot dot-teal"></div><div class="ex-body"><div class="ex-name" contenteditable="true" spellcheck="false" oninput="save()">Barbell bench press</div><div class="ex-hint" contenteditable="true" spellcheck="false" oninput="save()">Top set 95–97.5 kg — chase the 100</div></div><div class="ex-sets" contenteditable="true" spellcheck="false" oninput="save()">4 × 4–6</div><button class="del-btn" onclick="delRow(this)">×</button></div>
+        <div class="ex-row"><div class="dot dot-blue"></div><div class="ex-body"><div class="ex-name" contenteditable="true" spellcheck="false" oninput="save()">Incline dumbbell press</div><div class="ex-hint" contenteditable="true" spellcheck="false" oninput="save()">Upper chest, controlled tempo</div></div><div class="ex-sets" contenteditable="true" spellcheck="false" oninput="save()">3 × 8–10</div><button class="del-btn" onclick="delRow(this)">×</button></div>
+        <div class="ex-row"><div class="dot dot-blue"></div><div class="ex-body"><div class="ex-name" contenteditable="true" spellcheck="false" oninput="save()">Lateral raises</div><div class="ex-hint" contenteditable="true" spellcheck="false" oninput="save()">Slow and strict, shoulder width</div></div><div class="ex-sets" contenteditable="true" spellcheck="false" oninput="save()">4 × 12–15</div><button class="del-btn" onclick="delRow(this)">×</button></div>
+        <div class="ex-row"><div class="dot dot-amber"></div><div class="ex-body"><div class="ex-name" contenteditable="true" spellcheck="false" oninput="save()">Tricep pushdowns + overhead ext.</div><div class="ex-hint" contenteditable="true" spellcheck="false" oninput="save()">Superset, rest 90 s between</div></div><div class="ex-sets" contenteditable="true" spellcheck="false" oninput="save()">3 × 10–12</div><button class="del-btn" onclick="delRow(this)">×</button></div>
+      </div>
+      <div class="add-row">
+        <input id="ex-name-in" placeholder="Exercise name">
+        <input id="ex-sets-in" placeholder="Sets × reps">
+        <button class="add-btn" onclick="addExercise()">+ Add</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Overall progress</div>
+        <div style="font-size:11px;color:var(--subtle)">edit % to update bars</div>
+      </div>
+      <div id="progress-rows">
+        <div class="goal-row"><div class="goal-info"><div class="goal-name" contenteditable="true" spellcheck="false" oninput="save()">Bench press</div><div class="goal-detail" contenteditable="true" spellcheck="false" oninput="save()">95 kg → 100 kg</div></div><div class="g-track"><div class="g-fill" style="width:95%;background:var(--teal)"></div></div><div class="pct-wrap"><input class="pct-input" type="number" min="0" max="100" value="95" oninput="updateBar(this);save()" data-color="var(--teal)"><span class="pct-sign">%</span></div></div>
+        <div class="goal-row"><div class="goal-info"><div class="goal-name" contenteditable="true" spellcheck="false" oninput="save()">Arm &amp; back size</div><div class="goal-detail" contenteditable="true" spellcheck="false" oninput="save()">Building — volume + mass gainer</div></div><div class="g-track"><div class="g-fill" style="width:55%;background:var(--blue)"></div></div><div class="pct-wrap"><input class="pct-input" type="number" min="0" max="100" value="55" oninput="updateBar(this);save()" data-color="var(--blue)"><span class="pct-sign">%</span></div></div>
+        <div class="goal-row"><div class="goal-info"><div class="goal-name" contenteditable="true" spellcheck="false" oninput="save()">1.5 mi run</div><div class="goal-detail" contenteditable="true" spellcheck="false" oninput="save()">Towards 10:30 infantry standard</div></div><div class="g-track"><div class="g-fill" style="width:40%;background:var(--amber)"></div></div><div class="pct-wrap"><input class="pct-input" type="number" min="0" max="100" value="40" oninput="updateBar(this);save()" data-color="var(--amber)"><span class="pct-sign">%</span></div></div>
+        <div class="goal-row"><div class="goal-info"><div class="goal-name" contenteditable="true" spellcheck="false" oninput="save()">Hip mobility</div><div class="goal-detail" contenteditable="true" spellcheck="false" oninput="save()">Daily stretch protocol</div></div><div class="g-track"><div class="g-fill" style="width:30%;background:var(--purple)"></div></div><div class="pct-wrap"><input class="pct-input" type="number" min="0" max="100" value="30" oninput="updateBar(this);save()" data-color="var(--purple)"><span class="pct-sign">%</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEKLY PLAN -->
+  <div id="plan" class="section">
+    <div class="edit-tip"><div class="edit-dot"></div>Tap day name or muscles to edit</div>
+    <div class="day-grid">
+      <div class="day-card"><div class="day-lbl">Monday</div><div class="day-focus" contenteditable="true" spellcheck="false" oninput="save()">Push</div><div class="day-muscles" contenteditable="true" spellcheck="false" oninput="save()">Chest · shoulders · triceps</div><span class="day-badge badge-teal">Strength</span></div>
+      <div class="day-card"><div class="day-lbl">Tuesday</div><div class="day-focus" contenteditable="true" spellcheck="false" oninput="save()">Pull</div><div class="day-muscles" contenteditable="true" spellcheck="false" oninput="save()">Back · biceps · rear delts</div><span class="day-badge badge-blue">Size</span></div>
+      <div class="day-card rest-day"><div class="day-lbl">Wednesday</div><div class="day-focus" contenteditable="true" spellcheck="false" oninput="save()">Active rest</div><div class="day-muscles" contenteditable="true" spellcheck="false" oninput="save()">Easy 20 min jog</div><span class="day-badge badge-amber">Cardio</span></div>
+      <div class="day-card"><div class="day-lbl">Thursday</div><div class="day-focus" contenteditable="true" spellcheck="false" oninput="save()">Legs</div><div class="day-muscles" contenteditable="true" spellcheck="false" oninput="save()">Quads · hamstrings · calves</div><span class="day-badge badge-teal">Strength</span></div>
+      <div class="day-card"><div class="day-lbl">Friday</div><div class="day-focus" contenteditable="true" spellcheck="false" oninput="save()">Upper accessory</div><div class="day-muscles" contenteditable="true" spellcheck="false" oninput="save()">Arms · shoulders · chest</div><span class="day-badge badge-blue">Size</span></div>
+      <div class="day-card rest-day"><div class="day-lbl">Saturday</div><div class="day-focus" contenteditable="true" spellcheck="false" oninput="save()">Run</div><div class="day-muscles" contenteditable="true" spellcheck="false" oninput="save()">Timed 1.5 mi or tempo</div><span class="day-badge badge-amber">Cardio</span></div>
+      <div class="day-card rest-day full-width"><div class="day-lbl">Sunday</div><div class="day-focus" contenteditable="true" spellcheck="false" oninput="save()">Full rest + hip mobility</div><div class="day-muscles" contenteditable="true" spellcheck="false" oninput="save()">Recovery — 10 min daily mobility routine</div></div>
+    </div>
+  </div>
+
+  <!-- GOALS -->
+  <div id="goals" class="section">
+    <div class="edit-tip"><div class="edit-dot"></div>Edit names, details and progress %</div>
+
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Strength goals</div><div class="badge badge-teal">Primary</div></div>
+      <div class="goal-row"><div class="goal-info"><div class="goal-name" contenteditable="true" spellcheck="false" oninput="save()">Barbell bench press</div><div class="goal-detail" contenteditable="true" spellcheck="false" oninput="save()">Current 95 kg — target 100 kg</div></div><div class="g-track"><div class="g-fill" style="width:95%;background:var(--teal)"></div></div><div class="pct-wrap"><input class="pct-input" type="number" min="0" max="100" value="95" oninput="updateBar(this);save()" data-color="var(--teal)"><span class="pct-sign">%</span></div></div>
+      <div class="goal-row"><div class="goal-info"><div class="goal-name" contenteditable="true" spellcheck="false" oninput="save()">Deadlift</div><div class="goal-detail" contenteditable="true" spellcheck="false" oninput="save()">Set your target</div></div><div class="g-track"><div class="g-fill" style="width:60%;background:var(--teal)"></div></div><div class="pct-wrap"><input class="pct-input" type="number" min="0" max="100" value="60" oninput="updateBar(this);save()" data-color="var(--teal)"><span class="pct-sign">%</span></div></div>
+      <div class="goal-row"><div class="goal-info"><div class="goal-name" contenteditable="true" spellcheck="false" oninput="save()">Squat</div><div class="goal-detail" contenteditable="true" spellcheck="false" oninput="save()">Set your target</div></div><div class="g-track"><div class="g-fill" style="width:55%;background:var(--teal)"></div></div><div class="pct-wrap"><input class="pct-input" type="number" min="0" max="100" value="55" oninput="updateBar(this);save()" data-color="var(--teal)"><span class="pct-sign">%</span></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Size &amp; composition</div><div class="badge badge-blue">Building</div></div>
+      <div class="goal-row"><div class="goal-info"><div class="goal-name" contenteditable="true" spellcheck="false" oninput="save()">Arm size</div><div class="goal-detail" contenteditable="true" spellcheck="false" oninput="save()">High volume + mass gainer protocol</div></div><div class="g-track"><div class="g-fill" style="width:55%;background:var(--blue)"></div></div><div class="pct-wrap"><input class="pct-input" type="number" min="0" max="100" value="55" oninput="updateBar(this);save()" data-color="var(--blue)"><span class="pct-sign">%</span></div></div>
+      <div class="goal-row"><div class="goal-info"><div class="goal-name" contenteditable="true" spellcheck="false" oninput="save()">Back thickness</div><div class="goal-detail" contenteditable="true" spellcheck="false" oninput="save()">Heavy rows and pulldowns</div></div><div class="g-track"><div class="g-fill" style="width:50%;background:var(--blue)"></div></div><div class="pct-wrap"><input class="pct-input" type="number" min="0" max="100" value="50" oninput="updateBar(this);save()" data-color="var(--blue)"><span class="pct-sign">%</span></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Mobility &amp; cardio</div><div class="badge badge-purple">In progress</div></div>
+      <div class="goal-row"><div class="goal-info"><div class="goal-name" contenteditable="true" spellcheck="false" oninput="save()">Hip flexibility</div><div class="goal-detail" contenteditable="true" spellcheck="false" oninput="save()">Key for squat depth and running</div></div><div class="g-track"><div class="g-fill" style="width:30%;background:var(--purple)"></div></div><div class="pct-wrap"><input class="pct-input" type="number" min="0" max="100" value="30" oninput="updateBar(this);save()" data-color="var(--purple)"><span class="pct-sign">%</span></div></div>
+      <div class="goal-row"><div class="goal-info"><div class="goal-name" contenteditable="true" spellcheck="false" oninput="save()">1.5 mi run</div><div class="goal-detail" contenteditable="true" spellcheck="false" oninput="save()">Infantry standard 10:30</div></div><div class="g-track"><div class="g-fill" style="width:40%;background:var(--amber)"></div></div><div class="pct-wrap"><input class="pct-input" type="number" min="0" max="100" value="40" oninput="updateBar(this);save()" data-color="var(--amber)"><span class="pct-sign">%</span></div></div>
+    </div>
+  </div>
+
+  <!-- RUNNING -->
+  <div id="running" class="section">
+    <div class="edit-tip"><div class="edit-dot"></div>Tap any session to edit it</div>
+    <div class="stats-row cols2" style="margin-bottom:1.25rem">
+      <div class="stat-card"><div class="stat-lbl">Target time</div><div class="stat-val" contenteditable="true" spellcheck="false" oninput="save()">10:30</div><div class="stat-sub">1.5 mile infantry</div></div>
+      <div class="stat-card"><div class="stat-lbl">Required pace</div><div class="stat-val" contenteditable="true" spellcheck="false" oninput="save()">7:00 /mi</div><div class="stat-sub">Consistent effort</div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">8-week build programme</div><div class="badge badge-blue">Alongside gym</div></div>
+      <div class="run-block"><div class="run-wk" contenteditable="true" spellcheck="false" oninput="save()">Weeks 1–2 — base</div><div class="run-s"><span class="run-day">Wed</span><span class="run-desc" contenteditable="true" spellcheck="false" oninput="save()">Easy 20 min jog at conversational pace</span></div><div class="run-s"><span class="run-day">Sat</span><span class="run-desc" contenteditable="true" spellcheck="false" oninput="save()">1.5 mi time trial — record your baseline</span></div></div>
+      <div class="run-block"><div class="run-wk" contenteditable="true" spellcheck="false" oninput="save()">Weeks 3–4 — intervals</div><div class="run-s"><span class="run-day">Wed</span><span class="run-desc" contenteditable="true" spellcheck="false" oninput="save()">6 × 400 m at 7:00/mi pace, 90 s rest</span></div><div class="run-s"><span class="run-day">Sat</span><span class="run-desc" contenteditable="true" spellcheck="false" oninput="save()">2 mi easy steady run</span></div></div>
+      <div class="run-block"><div class="run-wk" contenteditable="true" spellcheck="false" oninput="save()">Weeks 5–6 — tempo</div><div class="run-s"><span class="run-day">Wed</span><span class="run-desc" contenteditable="true" spellcheck="false" oninput="save()">15 min tempo run at 7:30/mi</span></div><div class="run-s"><span class="run-day">Sat</span><span class="run-desc" contenteditable="true" spellcheck="false" oninput="save()">1.5 mi time trial — track improvement</span></div></div>
+      <div class="run-block"><div class="run-wk" contenteditable="true" spellcheck="false" oninput="save()">Weeks 7–8 — sharpen</div><div class="run-s"><span class="run-day">Wed</span><span class="run-desc" contenteditable="true" spellcheck="false" oninput="save()">4 × 800 m at goal pace, 2 min rest</span></div><div class="run-s"><span class="run-day">Sat</span><span class="run-desc" contenteditable="true" spellcheck="false" oninput="save()">Full test — 1.5 mi timed</span></div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function updateBar(input) {
+  var v = Math.min(100, Math.max(0, parseInt(input.value) || 0));
+  var row = input.closest('.goal-row');
+  if (!row) return;
+  var fill = row.querySelector('.g-fill');
+  if (fill) { fill.style.width = v + '%'; fill.style.background = input.dataset.color; }
+}
+
+function delRow(btn) {
+  var row = btn.closest('.ex-row');
+  if (row) { row.remove(); save(); }
+}
+
+function addExercise() {
+  var nameIn = document.getElementById('ex-name-in');
+  var setsIn = document.getElementById('ex-sets-in');
+  var name = nameIn.value.trim();
+  var sets = setsIn.value.trim() || '3 × 10';
+  if (!name) return;
+  var container = document.getElementById('today-exs');
+  var div = document.createElement('div');
+  div.className = 'ex-row';
+  div.innerHTML = '<div class="dot dot-teal"></div><div class="ex-body"><div class="ex-name" contenteditable="true" spellcheck="false" oninput="save()">' + name + '</div><div class="ex-hint" contenteditable="true" spellcheck="false" oninput="save()">Add a note</div></div><div class="ex-sets" contenteditable="true" spellcheck="false" oninput="save()">' + sets + '</div><button class="del-btn" onclick="delRow(this)">×</button>';
+  container.appendChild(div);
+  nameIn.value = ''; setsIn.value = ''; nameIn.focus();
+  save();
+}
+
+function updateBenchBar() {
+  var cur = parseFloat((document.getElementById('s-bench').textContent || '95').replace(/[^\d.]/g, '')) || 0;
+  var tgt = parseFloat((document.getElementById('s-bench-target').textContent || '100').replace(/[^\d.]/g, '')) || 100;
+  var pct = tgt > 0 ? Math.min(100, Math.round(cur / tgt * 100)) : 0;
+  var bar = document.getElementById('bench-bar');
+  if (bar) bar.style.width = pct + '%';
+}
+
+var saveTimer;
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function() {
+    try {
+      localStorage.setItem('gymhub_html', document.querySelector('.app').innerHTML);
+    } catch(e) {}
+  }, 600);
+}
+
+function loadSaved() {
+  try {
+    var saved = localStorage.getItem('gymhub_html');
+    if (saved) {
+      document.querySelector('.app').innerHTML = saved;
+      document.querySelectorAll('.nav-btn').forEach(function(btn, i) {
+        btn.onclick = function() { switchTab(['dashboard','plan','goals','running'][i], btn); };
+      });
+      document.querySelectorAll('.pct-input').forEach(function(inp) {
+        inp.oninput = function() { updateBar(inp); save(); };
+      });
+      document.querySelectorAll('[oninput]').forEach(function(el) {
+        var fn = el.getAttribute('oninput');
+        el.oninput = function() { eval(fn); };
+      });
+    }
+  } catch(e) {}
+}
+
+document.getElementById('ex-name-in').addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('ex-sets-in').focus(); } });
+document.getElementById('ex-sets-in').addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); addExercise(); } });
+</script>
+</body>
+</html>
